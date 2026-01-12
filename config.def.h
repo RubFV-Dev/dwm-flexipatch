@@ -1,5 +1,8 @@
 /* See LICENSE file for copyright and license details. */
 
+// ==== INCLUDE'S ==== //
+#include <X11/XF86keysym.h>
+
 /* Helper macros for spawning commands */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 #define CMD(...)   { .v = (const char*[]){ __VA_ARGS__, NULL } }
@@ -9,7 +12,7 @@
 static const unsigned int borderpx       = 0;   /* border pixel of windows */
 static const int corner_radius           = 10;
 #else
-static const unsigned int borderpx       = 1;   /* border pixel of windows */
+static const unsigned int borderpx       = 3;   /* border pixel of windows */
 #endif // ROUNDED_CORNERS_PATCH
 #if BAR_BORDER_PATCH
 /* This allows the bar border size to be explicitly set separately from borderpx.
@@ -169,7 +172,7 @@ static void (*bartabmonfns[])(Monitor *) = { NULL /* , customlayoutfn */ };
 #if BAR_PANGO_PATCH
 static const char font[]                 = "monospace 10";
 #else
-static const char *fonts[]               = { "monospace:size=10" };
+static const char *fonts[]               = { "FiraCode Nerd Font:size=12" };
 #endif // BAR_PANGO_PATCH
 static const char dmenufont[]            = "monospace:size=10";
 
@@ -527,11 +530,25 @@ static const Rule rules[] = {
 	RULE(.wintype = WTYPE "SPLASH", .isfloating = 1)
 	RULE(.class = "Gimp", .tags = 1 << 4)
 	RULE(.class = "Firefox", .tags = 1 << 7)
+
 	#if RENAMED_SCRATCHPADS_PATCH
 	RULE(.instance = "spterm", .scratchkey = 's', .isfloating = 1)
 	#elif SCRATCHPADS_PATCH
 	RULE(.instance = "spterm", .tags = SPTAG(0), .isfloating = 1)
 	#endif // SCRATCHPADS_PATCH
+
+	// ==== SIOYEK ==== //
+	RULE(.class = "Sioyek", .instance = "sioyek_helper_window", .isfloating = 1)
+	RULE(.class = "Sioyek", .isfloating = 0)
+	
+	// ==== STEAM ==== //
+	RULE(.class = "steam", .instance="steamwebhelper", .title = "Friends List", .isfloating = 1)
+	RULE(.class = "steam", .instance="steamwebhelper", .title = "Settings", .isfloating = 1)
+	RULE(.class = "steam", .instance="steamwebhelper", .title = "Steam - News", .isfloating = 1)
+	RULE(.class = "steam", .tags = 1 << 4)
+
+	// ==== WHATSAPP ==== //
+	RULE(.class = "qutebrowser", .title = "WhatsApp", .tags = 1 << 2)
 };
 
 #if MONITOR_RULES_PATCH
@@ -654,12 +671,12 @@ static const BarRule barrules[] = {
 };
 
 /* layout(s) */
-static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
+static const float mfact     = 0.575; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 #if FLEXTILE_DELUXE_LAYOUT
 static const int nstack      = 0;    /* number of clients in primary stack area */
 #endif // FLEXTILE_DELUXE_LAYOUT
-static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
+static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 static const int refreshrate = 120;  /* refresh rate (per second) for client move/resize */
 #if PLACEMOUSE_PATCH
@@ -810,7 +827,7 @@ static const char *xkb_layouts[]  = {
 #endif // XKB_PATCH
 
 /* key definitions */
-#define MODKEY Mod1Mask
+#define MODKEY Mod4Mask
 #if COMBO_PATCH && SWAPTAGS_PATCH && TAGOTHERMONITOR_PATCH
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      comboview,      {.ui = 1 << TAG} }, \
@@ -907,7 +924,32 @@ static const char *dmenucmd[] = {
 	#endif // BAR_DMENUMATCHTOP_PATCH
 	NULL
 };
-static const char *termcmd[]  = { "st", NULL };
+
+// ==== KITTY ==== //
+static const char *termcmd[]  = { "kitty", NULL };
+
+// ==== VOLUMEN ==== //
+static const char *volUp[] = {"wpctl","set-volume","@DEFAULT_AUDIO_SINK@","5%+",NULL};
+static const char *volDown[] = {"wpctl","set-volume","@DEFAULT_AUDIO_SINK@","5%-",NULL};
+static const char *volMute[] = {"wpctl","set-mute","@DEFAULT_AUDIO_SINK@","toggle",NULL};
+
+// ==== ROFI ==== //
+static const char *roficmd[] = {"rofi","-show","drun","-show-icons",NULL};
+
+// ==== WHATSAPP ==== //
+static const char *whatsapp[] = {
+	"qutebrowser",
+	"--basedir", "home/rubfv/.local/share/qutebrowser-whatsapp",
+	"--set", "tabs.show", "never", 
+	"--set", "statusbar.show", "always",
+	"--set", "window.title_format", "WhatsApp",
+	"https://web.whatsapp.com",
+	NULL
+};
+
+// ==== FLAMESHOT ==== //
+static const char *flameshotGui[] = {"flameshot", "gui", NULL};
+static const char *flameshotFull[] = {"flameshot", "full", "-c", NULL};
 
 #if BAR_STATUSCMD_PATCH
 #if BAR_DWMBLOCKS_PATCH
@@ -1041,13 +1083,29 @@ ResourcePref resources[] = {
 
 static const Key keys[] = {
 	/* modifier                     key            function                argument */
+
+	// ==== VOLUMEN ==== //
+	{ 0,              XF86XK_AudioRaiseVolume,     spawn,                  { .v = volUp } },
+	{ 0,              XF86XK_AudioLowerVolume,     spawn,                  { .v = volDown } },
+	{ 0,                     XF86XK_AudioMute,     spawn,                  { .v = volMute } },
+	
+	{ MODKEY|ShiftMask,                  XK_x,     quit,                  { 1 } },
+
+
+	// ==== CAPTURA DE PANTALLA ==== //
+	{ 0,                             XK_Print,     spawn,                  { .v = flameshotGui } },
+	{ ShiftMask,                     XK_Print,     spawn,                  { .v = flameshotFull } },
+
+	// ==== WhatsApp ==== //
+	{ MODKEY|ShiftMask,                  XK_w,     spawn,                  { .v = whatsapp} },
+
 	#if KEYMODES_PATCH
 	{ MODKEY,                       XK_Escape,     setkeymode,             {.ui = COMMANDMODE} },
 	#endif // KEYMODES_PATCH
-	{ MODKEY,                       XK_p,          spawn,                  {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_Return,     spawn,                  {.v = termcmd } },
-	#if RIODRAW_PATCH
-	{ MODKEY|ControlMask,           XK_p,          riospawnsync,           {.v = dmenucmd } },
+	{ MODKEY,                       XK_d,          spawn,                  {.v = roficmd } },
+	{ MODKEY,                       XK_Return,     spawn,                  {.v = termcmd } },
+	#if RIODRAW_PATCHi
+	{ MODKEY|ControlMask,           XK_p,          riospawnsync,           {.v = roficmd } },
 	{ MODKEY|ControlMask,           XK_Return,     riospawn,               {.v = termcmd } },
 	{ MODKEY,                       XK_s,          rioresize,              {0} },
 	#endif // RIODRAW_PATCH
@@ -1100,8 +1158,8 @@ static const Key keys[] = {
 	{ MODKEY|ControlMask,           XK_j,          pushdown,               {0} },
 	{ MODKEY|ControlMask,           XK_k,          pushup,                 {0} },
 	#endif // PUSH_PATCH / PUSH_NO_MASTER_PATCH
-	{ MODKEY,                       XK_i,          incnmaster,             {.i = +1 } },
-	{ MODKEY,                       XK_d,          incnmaster,             {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_i,          incnmaster,             {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_d,          incnmaster,             {.i = -1 } },
 	#if FLEXTILE_DELUXE_LAYOUT
 	{ MODKEY|ControlMask,           XK_i,          incnstack,              {.i = +1 } },
 	{ MODKEY|ControlMask,           XK_u,          incnstack,              {.i = -1 } },
@@ -1146,7 +1204,7 @@ static const Key keys[] = {
 	#if INSETS_PATCH
 	{ MODKEY|ShiftMask|ControlMask, XK_a,          updateinset,            {.v = &default_inset } },
 	#endif // INSETS_PATCH
-	{ MODKEY,                       XK_Return,     zoom,                   {0} },
+	{ MODKEY|ShiftMask,             XK_Return,     zoom,                   {0} },
 	#if VANITYGAPS_PATCH
 	{ MODKEY|Mod4Mask,              XK_u,          incrgaps,               {.i = +1 } },
 	{ MODKEY|Mod4Mask|ShiftMask,    XK_u,          incrgaps,               {.i = -1 } },
@@ -1205,7 +1263,7 @@ static const Key keys[] = {
 	#if SELFRESTART_PATCH
 	{ MODKEY|ShiftMask,             XK_r,          self_restart,           {0} },
 	#endif // SELFRESTART_PATCH
-	{ MODKEY|ShiftMask,             XK_q,          quit,                   {0} },
+	{ MODKEY|ShiftMask,             XK_q,          killclient,                   {0} },
 	#if RESTARTSIG_PATCH
 	{ MODKEY|ControlMask|ShiftMask, XK_q,          quit,                   {1} },
 	#endif // RESTARTSIG_PATCH
@@ -1221,9 +1279,9 @@ static const Key keys[] = {
 	#if XRDB_PATCH || XRESOURCES_PATCH
 	{ MODKEY|ShiftMask,             XK_F5,         xrdb,                   {.v = NULL } },
 	#endif // XRDB_PATCH | XRESOURCES_PATCH
-	{ MODKEY,                       XK_t,          setlayout,              {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,          setlayout,              {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,          setlayout,              {.v = &layouts[2]} },
+	// { MODKEY,                       XK_t,          setlayout,              {.v = &layouts[0]} },
+	//{ MODKEY,                       XK_f,          setlayout,              {.v = &layouts[1]} },
+	//{ MODKEY,                       XK_m,          setlayout,              {.v = &layouts[2]} },
 	#if COLUMNS_LAYOUT
 	{ MODKEY,                       XK_c,          setlayout,              {.v = &layouts[3]} },
 	#endif // COLUMNS_LAYOUT
