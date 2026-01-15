@@ -178,27 +178,27 @@ static const char dmenufont[]            = "monospace:size=10";
 
 static char c000000[]                    = "#000000"; // placeholder value
 
-static char normfgcolor[]                = "#bbbbbb";
-static char normbgcolor[]                = "#222222";
-static char normbordercolor[]            = "#444444";
-static char normfloatcolor[]             = "#db8fd9";
+static char normfgcolor[]                = "#F0FFFF";
+static char normbgcolor[]                = "#0B242A";
+static char normbordercolor[]            = "#470033";
+static char normfloatcolor[]             = "#5C4757";
 
 static char selfgcolor[]                 = "#eeeeee";
 static char selbgcolor[]                 = "#005577";
-static char selbordercolor[]             = "#005577";
-static char selfloatcolor[]              = "#005577";
+static char selbordercolor[]             = "#FF6ED7";
+static char selfloatcolor[]              = "#FF6ED7";
 
 static char titlenormfgcolor[]           = "#bbbbbb";
-static char titlenormbgcolor[]           = "#222222";
+static char titlenormbgcolor[]           = "#70FFFF";
 static char titlenormbordercolor[]       = "#444444";
 static char titlenormfloatcolor[]        = "#db8fd9";
 
-static char titleselfgcolor[]            = "#eeeeee";
-static char titleselbgcolor[]            = "#005577";
-static char titleselbordercolor[]        = "#005577";
-static char titleselfloatcolor[]         = "#005577";
+static char titleselfgcolor[]            = "#004738";
+static char titleselbgcolor[]            = "#6EFFE0";
+static char titleselbordercolor[]        = "#6EFFE0";
+static char titleselfloatcolor[]         = "#6EFFE0";
 
-static char tagsnormfgcolor[]            = "#bbbbbb";
+static char tagsnormfgcolor[]            = "#F0FFFF";
 static char tagsnormbgcolor[]            = "#222222";
 static char tagsnormbordercolor[]        = "#444444";
 static char tagsnormfloatcolor[]         = "#db8fd9";
@@ -480,7 +480,7 @@ static char tagicons[][NUMTAGS][MAX_TAGLEN] =
 static char *tagicons[][NUMTAGS] =
 #endif // NAMETAG_PATCH
 {
-	[DEFAULT_TAGS]        = { "1", "2", "3", "4", "5", "6", "7", "8", "9" },
+	[DEFAULT_TAGS]        = { "󰖟", "", "", "あ", "󰖣", "󰓓", "", "", "󰔶" },
 	[ALTERNATIVE_TAGS]    = { "A", "B", "C", "D", "E", "F", "G", "H", "I" },
 	[ALT_TAGS_DECORATION] = { "<1>", "<2>", "<3>", "<4>", "<5>", "<6>", "<7>", "<8>", "<9>" },
 };
@@ -545,10 +545,10 @@ static const Rule rules[] = {
 	RULE(.class = "steam", .instance="steamwebhelper", .title = "Friends List", .isfloating = 1)
 	RULE(.class = "steam", .instance="steamwebhelper", .title = "Settings", .isfloating = 1)
 	RULE(.class = "steam", .instance="steamwebhelper", .title = "Steam - News", .isfloating = 1)
-	RULE(.class = "steam", .tags = 1 << 4)
+	RULE(.class = "steam", .tags = 1 << 5)
 
 	// ==== WHATSAPP ==== //
-	RULE(.class = "qutebrowser", .title = "WhatsApp", .tags = 1 << 2)
+	RULE(.class = "qutebrowser", .title = "WhatsApp", .tags = 1 << 4)
 };
 
 #if MONITOR_RULES_PATCH
@@ -905,7 +905,10 @@ static const char *xkb_layouts[]  = {
 #define HOLDKEY 0 // replace 0 with the keysym to activate holdbar
 #endif // BAR_HOLDBAR_PATCH
 
-/* commands */
+// =================== //
+// ==== COMANDOS ===== //
+// =================== //
+
 #if !NODMENU_PATCH
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 #endif // NODMENU_PATCH
@@ -932,6 +935,10 @@ static const char *termcmd[]  = { "kitty", NULL };
 static const char *volUp[] = {"wpctl","set-volume","@DEFAULT_AUDIO_SINK@","5%+",NULL};
 static const char *volDown[] = {"wpctl","set-volume","@DEFAULT_AUDIO_SINK@","5%-",NULL};
 static const char *volMute[] = {"wpctl","set-mute","@DEFAULT_AUDIO_SINK@","toggle",NULL};
+
+// ==== BRILLO ===== //
+static const char *brilloUp[] = {"brightnessctl", "set", "+5%", NULL};
+static const char *brilloDown[] = {"brightnessctl", "set", "5%-", NULL};
 
 // ==== ROFI ==== //
 static const char *roficmd[] = {"rofi","-show","drun","-show-icons",NULL};
@@ -1088,15 +1095,19 @@ static const Key keys[] = {
 	{ 0,              XF86XK_AudioRaiseVolume,     spawn,                  { .v = volUp } },
 	{ 0,              XF86XK_AudioLowerVolume,     spawn,                  { .v = volDown } },
 	{ 0,                     XF86XK_AudioMute,     spawn,                  { .v = volMute } },
-	
-	{ MODKEY|ShiftMask,                  XK_x,     quit,                  { 1 } },
 
+	// ==== BRILLO ==== //
+	{ 0,               XF86XK_MonBrightnessUp,     spawn,                  { .v = brilloUp } },
+	{ 0,             XF86XK_MonBrightnessDown,     spawn,                  { .v = brilloDown } },
+	
+	// ==== QUITAR DWM ==== //
+	{ MODKEY|ShiftMask,                  XK_x,     quit,                  { 1 } },
 
 	// ==== CAPTURA DE PANTALLA ==== //
 	{ 0,                             XK_Print,     spawn,                  { .v = flameshotGui } },
 	{ ShiftMask,                     XK_Print,     spawn,                  { .v = flameshotFull } },
 
-	// ==== WhatsApp ==== //
+	// ==== WHATSAPP ==== //
 	{ MODKEY|ShiftMask,                  XK_w,     spawn,                  { .v = whatsapp} },
 
 	#if KEYMODES_PATCH
