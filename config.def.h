@@ -187,25 +187,25 @@ static char selbgcolor[]                 = "#005577";
 static char selbordercolor[]             = "#FF6ED7";
 static char selfloatcolor[]              = "#FF6ED7";
 
-static char titlenormfgcolor[]           = "#bbbbbb";
-static char titlenormbgcolor[]           = "#70FFFF";
+static char titlenormfgcolor[]           = "#988BA2";
+static char titlenormbgcolor[]           = "#191224";
 static char titlenormbordercolor[]       = "#444444";
-static char titlenormfloatcolor[]        = "#db8fd9";
+static char titlenormfloatcolor[]        = "#DB8FD9";
 
-static char titleselfgcolor[]            = "#004738";
-static char titleselbgcolor[]            = "#6EFFE0";
-static char titleselbordercolor[]        = "#6EFFE0";
-static char titleselfloatcolor[]         = "#6EFFE0";
+static char titleselfgcolor[]            = "#191224";
+static char titleselbgcolor[]            = "#E0D4FF";
+static char titleselbordercolor[]        = "#E0D4FF";
+static char titleselfloatcolor[]         = "#E0D4FF";
 
 static char tagsnormfgcolor[]            = "#F0FFFF";
-static char tagsnormbgcolor[]            = "#222222";
-static char tagsnormbordercolor[]        = "#444444";
-static char tagsnormfloatcolor[]         = "#db8fd9";
+static char tagsnormbgcolor[]            = "#191224";
+static char tagsnormbordercolor[]        = "#191224";
+static char tagsnormfloatcolor[]         = "#191224";
 
-static char tagsselfgcolor[]             = "#eeeeee";
-static char tagsselbgcolor[]             = "#005577";
-static char tagsselbordercolor[]         = "#005577";
-static char tagsselfloatcolor[]          = "#005577";
+static char tagsselfgcolor[]             = "#191224";
+static char tagsselbgcolor[]             = "#FF6AC1";
+static char tagsselbordercolor[]         = "#FF6AC1";
+static char tagsselfloatcolor[]          = "#FF6AC1";
 
 static char hidnormfgcolor[]             = "#005577";
 static char hidselfgcolor[]              = "#227799";
@@ -218,8 +218,8 @@ static char urgbordercolor[]             = "#ff0000";
 static char urgfloatcolor[]              = "#db8fd9";
 
 #if BAR_LTSYMBOL_SCHEME_PATCH
-static char ltsymbolfgcolor[]            = "#222222";
-static char ltsymbolbgcolor[]            = "#fe9877";
+static char ltsymbolfgcolor[]            = "#FF9F1C";
+static char ltsymbolbgcolor[]            = "#191224";
 #endif // BAR_LTSYMBOL_SCHEME_PATCH
 
 #if RENAMED_SCRATCHPADS_PATCH
@@ -479,7 +479,17 @@ static char tagicons[][NUMTAGS][MAX_TAGLEN] =
 static char *tagicons[][NUMTAGS] =
 #endif // NAMETAG_PATCH
 {
-	[DEFAULT_TAGS]        = { "󰖟", "", "", "あ", "󰖣", "󰓓", "", "", "󰔶" },
+	[DEFAULT_TAGS]        = { 
+    "󰖟", 
+    "", 
+    "", 
+    "あ", 
+    "󰖣", 
+    "󰓓", 
+    "", 
+    "", 
+    "󰔶" 
+  },
 	[ALTERNATIVE_TAGS]    = { "A", "B", "C", "D", "E", "F", "G", "H", "I" },
 	[ALT_TAGS_DECORATION] = { "<1>", "<2>", "<3>", "<4>", "<5>", "<6>", "<7>", "<8>", "<9>" },
 };
@@ -548,6 +558,7 @@ static const Rule rules[] = {
 
 	// ==== WHATSAPP ==== //
 	RULE(.class = "qutebrowser", .title = "WhatsApp", .tags = 1 << 4)
+  RULE(.class = "Tagaini Jisho", .title = "Tagaini Jisho", .tags = 1 << 3)
 };
 
 #if MONITOR_RULES_PATCH
